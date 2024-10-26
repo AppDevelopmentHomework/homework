@@ -30,7 +30,7 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
       setLoading(true);
       try {
         const token = await AsyncStorage.getItem("token");
-        const response = await fetch("http://192.168.0.8:5000/items/", {
+        const response = await fetch("http://172.17.192.1:5000/items/", {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -65,7 +65,7 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
   const handleDeletePress = async (itemId) => {
     try {
       const token = await AsyncStorage.getItem("token");
-      const response = await fetch(`http://192.168.0.8:5000/items/${itemId}`, {
+      const response = await fetch(`http://172.17.192.1:5000/items/${itemId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +90,7 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
     try {
       const token = await AsyncStorage.getItem("token");
       console.log("Token in addItem:", token);
-      const response = await fetch("http://192.168.0.8:5000/items/", {
+      const response = await fetch("http://172.17.192.1:5000/items/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +116,7 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
     try {
       const token = await AsyncStorage.getItem("token");
       const response = await fetch(
-        `http://192.168.0.8:5000/items/${editedItem._id}`,
+        `http://172.17.192.1:5000/items/${editedItem._id}`,
         {
           method: "PUT",
           headers: {
