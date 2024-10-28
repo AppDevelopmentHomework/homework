@@ -1,4 +1,3 @@
-// WelcomeScreen.js
 import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
@@ -20,12 +19,19 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");  // State to store the user's email
 
   const navigateToCameraFeature = () => {
     navigation.navigate("CameraFeature");
   };
 
   useEffect(() => {
+    // Fetch the email from AsyncStorage
+    const fetchEmail = async () => {
+      const storedEmail = await AsyncStorage.getItem("email");
+      if (storedEmail) setEmail(storedEmail);
+    };
+
     const fetchItems = async () => {
       setLoading(true);
       try {
@@ -45,11 +51,13 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
       }
     };
 
+    fetchEmail(); // Load email when the screen loads
     fetchItems();
   }, []);
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("email"); // Remove the saved email
     setIsLoggedIn(false);
     navigation.reset({
       index: 0,
@@ -86,10 +94,8 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
   };
 
   const addItem = async (newItem) => {
-    console.log("Adding item:", newItem);
     try {
       const token = await AsyncStorage.getItem("token");
-      console.log("Token in addItem:", token);
       const response = await fetch("http://172.17.192.1:5000/items/", {
         method: "POST",
         headers: {
@@ -104,7 +110,6 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
         throw new Error(errorResponse.message || "Failed to add item");
       }
       const savedItem = await response.json();
-      console.log("saved", savedItem);
       setData((prevData) => [savedItem, ...prevData]);
     } catch (error) {
       console.error("Error adding item", error);
@@ -144,15 +149,16 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
       alert("Failed to update item");
     }
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>Welcome!</Text>
+        <Text style={styles.headerText}>Welcome, {email || "Guest"}!</Text>
       </View>
       <View style={styles.listContainer}>
         {loading ? (
           <ActivityIndicator size="large" color="#ff00ff" />
-        ): data.length ? (
+        ) : data.length ? (
           <FlatList
             data={data}
             keyExtractor={(item) => item._id.toString()}
@@ -171,7 +177,7 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
               </View>
             )}
           />
-        ):(
+        ) : (
           <View>
             <Text>No items found</Text>
           </View>
@@ -179,12 +185,12 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
       </View>
       <AddItemModal onAddItem={addItem} />
       {selectedItem && (
-            <EditItemModal
-              item={selectedItem}
-              isVisible={isEditModalVisible}
-              onClose={() => setIsEditModalVisible(false)}
-              onSave={saveEditedItem}
-            />
+        <EditItemModal
+          item={selectedItem}
+          isVisible={isEditModalVisible}
+          onClose={() => setIsEditModalVisible(false)}
+          onSave={saveEditedItem}
+        />
       )}
       <View style={styles.footerContainer}>
         <Button
