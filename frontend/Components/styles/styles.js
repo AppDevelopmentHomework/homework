@@ -23,6 +23,16 @@ export default StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
+  profileContainer: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  profilePic: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
   input: {
     height: 40,
     width: "80%",

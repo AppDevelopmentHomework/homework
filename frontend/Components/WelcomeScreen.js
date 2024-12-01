@@ -7,12 +7,16 @@ import {
   View,
   FlatList,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import AddItemModal from "./AddItemModal";
 import EditItemModal from "./EditItemModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./styles/styles";
 import { FontAwesome } from '@expo/vector-icons';
+
+// Placeholder image URL
+const placeholderImage = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541";
 
 export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
   const [selectedItem, setSelectedItem] = useState(null);
@@ -24,6 +28,10 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
   const navigateToCameraFeature = () => {
     navigation.navigate("CameraFeature");
   };
+
+  const navigateToProfileScreen = () => {
+    navigation.navigate("ProfileScreen");
+  }
 
   useEffect(() => {
     // Fetch the email from AsyncStorage
@@ -155,6 +163,12 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Welcome, {email || "Guest"}!</Text>
       </View>
+      <View style={styles.profileContainer}>
+        <Image 
+          source={{ uri: placeholderImage }} 
+          style={styles.profilePic} 
+        />
+      </View>
       <View style={styles.listContainer}>
         {loading ? (
           <ActivityIndicator size="large" color="#ff00ff" />
@@ -197,6 +211,11 @@ export default function WelcomeScreen({ navigation, setIsLoggedIn }) {
           style={styles.button}
           title="Camera Feature"
           onPress={navigateToCameraFeature}
+        />
+        <Button
+          style={styles.button}
+          title="Profile"
+          onPress={navigateToProfileScreen}
         />
         <Button style={styles.button} title="Logout" onPress={handleLogout} />
       </View>
